@@ -1,15 +1,15 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import {Inputs} from "../../components/Input"
 import { useState, type FormEvent } from "react"
 import {auth} from "../../services/firebaseconnection"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword } from "firebase/auth"
 
-export function Login(){
+
+export function Cadastro(){
 
     const [inputEmail, setInputEmail] = useState("")
     const [inputSenha, setInputSenha] = useState("")
-    
-    const navigate = useNavigate();
+    const [inputNome, setInputNome] = useState("")
 
     async function handleSubmit(event: FormEvent){
         event.preventDefault();
@@ -18,21 +18,22 @@ export function Login(){
             alert("Preencha os dados necessarios")
         }
 
-        await signInWithEmailAndPassword (auth, inputEmail, inputSenha)
+        await createUserWithEmailAndPassword (auth, inputEmail, inputSenha)
 
         .then((value) => {
+            alert("Usuario Cadastrado")
             console.log(value.user);
             setInputEmail("");
             setInputSenha("");
-            navigate("/adm")
+            setInputNome("");
         })
         .catch((error) => {
-            if (error.code === "auth/user-not-found") {
-                alert("Usuário não encontrado.");
-            } else if (error.code === "auth/wrong-password") {
-                alert("Senha incorreta.");
-        }
-    })
+            if(error.code === "auth/weak-password"){
+                alert("Senha fraca")
+            } else if(error.code === "auth/email-already-in-use"){
+                alert("Email já existe!")
+            }
+        })
         
     }
 
@@ -46,6 +47,15 @@ export function Login(){
             </Link>
 
             <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-xl px-2">
+
+                <Inputs 
+                placeholder="Digite seu nome.."
+                type="text"
+                value={inputNome}
+                onChange={(e) => setInputNome(e.target.value)}
+                required
+                />
+
                 <Inputs 
                 placeholder="Digite seu email..."
                 type="email"
@@ -64,9 +74,9 @@ export function Login(){
                 />
                 
 
-                <button className="bg-blue-600 h-9 rounded-lg text-white cursor-pointer" type="submit">Acessar</button>
+                <button className="bg-blue-600 h-9 rounded-lg text-white cursor-pointer" type="submit">Criar</button>
             </form>
-                <span className="text-white mt-1.5" >Não tem uma conta?<Link to={"/cadastro"} className="underline ml-1"> Criar</Link></span>
+                <span className="text-white mt-1.5" >Já tem uma conta?<Link to={"/login"} className="underline ml-1"> Acessar</Link></span>
 
         </div>
     )
