@@ -30,6 +30,10 @@ export function Private({children}: PrivateProps): any {
                 setSigned(false)
             }
         })
+
+        return() => {
+            unsub();
+        }
     }, [])
 
     if(loding){
