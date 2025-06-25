@@ -3,9 +3,11 @@ import {Inputs} from "../../components/Input"
 import { useState, type FormEvent } from "react"
 import {auth} from "../../services/firebaseconnection"
 import { createUserWithEmailAndPassword } from "firebase/auth"
+import { useNavigate } from "react-router-dom"
 
 
 export function Cadastro(){
+    const navigate = useNavigate();
 
     const [inputEmail, setInputEmail] = useState("")
     const [inputSenha, setInputSenha] = useState("")
@@ -21,11 +23,12 @@ export function Cadastro(){
         await createUserWithEmailAndPassword (auth, inputEmail, inputSenha)
 
         .then((value) => {
-            alert("Usuario Cadastrado")
             console.log(value.user);
             setInputEmail("");
             setInputSenha("");
             setInputNome("");
+            navigate("/adm")
+            
         })
         .catch((error) => {
             if(error.code === "auth/weak-password"){

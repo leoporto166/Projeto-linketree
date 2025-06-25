@@ -3,16 +3,13 @@ import {Admin} from "./Pages/admin";
 import {Home} from "./Pages/Home";
 import { Cadastro } from "./Pages/Cadastro";
 import { NetWorks } from "./Pages/networks";
-import {Login} from "./Pages/Login"
+import { Login } from "./Pages/Login"
+import { Private } from "./routes/Private"
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <Home />
-    },
-    {
-        path: "/link",
-        element: <Admin />
     },
     {
         path: "/cadastro",
@@ -28,7 +25,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/adm",
-        element: <Admin />
+        element: <Private><Admin /></Private>
     }
 
 
