@@ -1,8 +1,18 @@
 
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { Header } from "../../components/Header"
 import { Inputs } from "../../components/Input"
 import { FiTrash } from "react-icons/fi"
+import { db } from "../../services/firebaseconnection"
+import { 
+    addDoc, 
+    collection, 
+    onSnapshot, 
+    query, 
+    orderBy,
+    doc, 
+    deleteDoc 
+} from "firebase/firestore"
 
 export function Admin(){
 
@@ -12,9 +22,35 @@ export function Admin(){
     const [corInput, setCorInput] = useState("#ffffff")
     const [fundoInput, setFundoInput] = useState("#000000")
 
+    async function handleRegister(event: FormEvent) {
+        event.preventDefault();
+
+        await addDoc(collection(db, "links"), {
+            name: nomeInput,
+            url: urlInput,
+            bg: fundoInput,
+            color: corInput,
+            created: new Date()
+        })
+
+        .then(() => {
+            console.log("Cadastrado com sucesso")
+        })
+        .catch((error) => {
+            console.log(`Erro ao cadastrar no banco ${error}`)
+            return
+        })
+
+        setNomeInput("");
+        setUrlInput("");
+
+        
+        
+    }
+
     
     return(
-        <div className="bg-linear-to-b to-black from-gray-600 w-full min-h-screen flex flex-col items-center" >
+        <div className="bg-linear-to-b to-black from-gray-600 w-full min-h-screen flex flex-col items-center" onSubmit={handleRegister} >
             <Header></Header>
                 <main className="w-full max-w-xl px-2 flex flex-col items-center">
                     <form className="flex flex-col text-white w-xl mt-5">
