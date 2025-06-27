@@ -1,5 +1,5 @@
 
-import { useState, type FormEvent } from "react"
+import { useState, type FormEvent, useEffect } from "react"
 import { Header } from "../../components/Header"
 import { Inputs } from "../../components/Input"
 import { FiTrash } from "react-icons/fi"
@@ -13,6 +13,15 @@ import {
     doc, 
     deleteDoc 
 } from "firebase/firestore"
+import { Link } from "react-router-dom"
+
+interface LinkProps{
+    id: string;
+    name: string;
+    url: string;
+    bg: string;
+    color: string;
+}
 
 export function Admin(){
 
@@ -20,8 +29,41 @@ export function Admin(){
     const [urlInput, setUrlInput] = useState("")
 
     const [corInput, setCorInput] = useState("#ffffff")
-    const [fundoInput, setFundoInput] = useState("#000000")
+    const [fundoInput, setFundoInput] = useState
+("#000000")
 
+    const [links, setLinks] = useState<LinkProps[]>([])
+    
+    useEffect(() => {
+        const linksRef = collection(db, "links");
+        const queryRef = query(linksRef, orderBy("created", "asc"));
+
+        const unsub = onSnapshot(queryRef, (snapshot) =>{
+            let lista = [] as LinkProps[];
+
+            snapshot.forEach((doc) => {
+                lista.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    url: doc.data().url,
+                    bg: doc.data().bg,
+                    color: doc.data().color
+
+
+                })
+            })
+
+            setLinks(lista)
+
+        })
+
+
+        return () => {
+            unsub();
+        }
+
+
+    }, [])
     async function handleRegister(event: FormEvent) {
         event.preventDefault();
 
@@ -46,6 +88,11 @@ export function Admin(){
 
         
         
+    }
+
+    async function handleDelete(id: string) {
+        const docRef = doc(db, "links", id)
+        deleteDoc(docRef)
     }
 
     
@@ -118,17 +165,29 @@ export function Admin(){
 
                     <h2 className="font-bold text-4xl text-white">Meus Links</h2>
 
-                    <article 
-                    className="flex items-center justify-between w-11/12 max-w-xl h-10 rounded-md py-3 px-2 my-4 select-none cursor-pointer"
-                    style={{backgroundColor: "#05F537", color: "#000"}}
-                    >
-                        <p>Canal do Youtube</p>
-                        <div>
-                            <button className="border border-dashed p-1 roundend bg-neutral-900 cursor-pointer">
-                                <FiTrash size={18} color="#fff"/>
-                            </button>
-                        </div>
-                    </article>
+                    
+
+                    {links.map((link) => (
+                        <article 
+                            className="flex items-center justify-between w-11/12 max-w-xl h-10 rounded-md py-3 px-2 my-4 select-none cursor-pointer"
+                            style={{backgroundColor: link.bg, color: link.color}}
+                            >
+                        <Link to= {link.url} className="flex items-center justify-between w-11/12 max-w-xl h-10 rounded-md py-3 px-2 my-4 select-none cursor-pointer" key={link.id}
+                        target="blank">
+                            
+                                <p>{link.name}</p>
+                                
+                        </Link>
+                                <div>
+                                    <button className="border border-dashed p-1 roundend bg-neutral-900 cursor-pointer" onClick= {() => handleDelete(link.id)}>
+                                        <FiTrash size={18} color="#fff"/>
+                                    </button>
+                                </div>
+                        
+                            </article>
+                        
+                        
+                    ))}
 
                 </main>
 
