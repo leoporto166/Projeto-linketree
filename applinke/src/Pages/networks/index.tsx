@@ -1,9 +1,9 @@
 
-import { useState, type FormEvent } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 import { Header } from "../../components/Header"
 import { Inputs } from "../../components/Input"
 import { db } from "../../services/firebaseconnection"
-import { addDoc,
+import {
         getDoc,
         setDoc,
         doc
@@ -16,6 +16,25 @@ export function NetWorks(){
     const [urlX, setUrlX] = useState("")
     const [urlFace, setUrlFace] = useState("")
     const [urlInsta, setUrlInsta] = useState("")
+
+    useEffect(() => {
+
+        function loadLinks() {
+            const docRef = doc(db, "linkSocial", "link")
+            getDoc(docRef)
+
+            .then((snapshot) => {
+                if(snapshot.data() !== undefined){
+                    setUrlFace(snapshot.data()?.facebook)
+                    setUrlInsta(snapshot.data()?.instagram)
+                    setUrlX(snapshot.data()?.x)
+                }
+
+            })
+        }
+
+        loadLinks();
+    }, [])
     async function handleSave(event: FormEvent){
         event.preventDefault();
 

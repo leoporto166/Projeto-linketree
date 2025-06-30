@@ -5,6 +5,7 @@ import { Cadastro } from "./Pages/Cadastro";
 import { NetWorks } from "./Pages/networks";
 import { Login } from "./Pages/Login"
 import { Private } from "./routes/Private"
+import { Error } from "./Pages/Error"
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
     {
         path: "/adm",
         element: <Private><Admin /></Private>
+    },
+    {
+        path: "*",
+        element: <Error />
     }
 
 

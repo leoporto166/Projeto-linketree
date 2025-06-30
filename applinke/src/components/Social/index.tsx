@@ -9,7 +9,8 @@ export function Social({url, children}: SocialProps){
     return(
         <a href={url}
         rel="noopener noreferrer"
-        target="blank">
+        target="_blank"
+        className="cursor-pointer">
             {children}
         </a>
     )
